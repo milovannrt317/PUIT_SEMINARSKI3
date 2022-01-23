@@ -1,0 +1,58 @@
+{% extends "ProdavnicaTrotineta/base.html" %}
+{% load static %}
+{% block title %} Korpa za kupovinu {% endblock %}
+{% block content %}
+<h1>Korpa za kupovinu</h1>
+<table class="cart">
+    <thead>
+    <tr>
+        <th>Slika</th>
+        <th>Trotinet</th>
+        <th>Kolicina</th>
+        <th>Ukloni iz korpe</th>
+        <th>Cena po komadu</th>
+        <th>Cena</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for stavka in korpa %}
+    {% with trotinet=stavka.trotinet %}
+    <tr>
+        <td>
+            <a href="{{ trotinet.ApsolutniURL }}">
+                <img src="{% if trotinet.slika %}{{ trotinet.slika.url }}
+                            {% else %}{% static 'img\\no_image.png' %}{% endif %}">
+            </a>
+        </td>
+        <td>{{ trotinet.naziv }}</td>
+        <td>
+            <form action="{% url 'KorpaZaKupovinu:DodajUKorpu' trotinet.id %}" method="post">
+            {{ stavka.formazaazuriranjekolicine.kolicina }}
+            {{ stavka.formazaazuriranjekolicine.dodati_na_kolicinu }}
+            <input type="submit" value="Azuriraj">
+            {% csrf_token %}
+            </form>
+        </td>
+        <td>
+            <form action="{% url 'KorpaZaKupovinu:UkloniIzKorpe' trotinet.id %}" method="post">
+            <input type="submit" value="Ukloni">
+            {% csrf_token %}
+            </form>
+        </td>
+        <td class="num">${{ stavka.cena }}</td>
+        <td class="num">${{ stavka.ukupna_cena }}</td>
+    </tr>
+    {% endwith %}
+    {% endfor %}
+    <tr class="total">
+        <td>Total</td>
+        <td colspan="4"></td>
+        <td class="num">${{ korpa.UzmiUkupnuCenu }}</td>
+    </tr>
+    </tbody>
+</table>
+<p class="text-right">
+    <a href="{% url 'ProdavnicaTrotineta:ListaTrotineta' %}" class="button light">Nastavak kupovine</a>
+    <a href="{% url 'Porudzbina:KreiranjePorudzbine' %}" class="button">Provera</a>
+</p>
+{% endblock %}

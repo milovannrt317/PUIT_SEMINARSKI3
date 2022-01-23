@@ -1,0 +1,26 @@
+{% extends "ProdavnicaTrotineta/base.html" %}
+{% load static %}
+{% block title %}
+{{ trotinet.naziv }}
+{% endblock %}
+{% block content %}
+<div class="product-detail">
+    <img src="{% if trotinet.slika %}{{ trotinet.slika.url }}
+{% else %} {% static 'img/no_image.png' %}{% endif %}">
+    <h1>{{ trotinet.naziv }}</h1>
+    <h2>
+        <a href="{{ trotinet.segment.ApsolutniURL }}">
+            {{ trotinet.segment }}
+        </a>
+    </h2>
+    <p class="price">&euro;{{ trotinet.cena }}</p>
+    <!-- dodato za korpu-->
+    <form action="{% url 'KorpaZaKupovinu:DodajUKorpu' trotinet.id %}"
+    method="post">
+    {{ formazadodavanjetrotinetaukorpu }}
+    {% csrf_token %}
+    <input type="submit" value="Dodaj u korpu">
+    </form>
+    {{ trotinet.opis|linebreaks }}
+</div>
+{% endblock %}
